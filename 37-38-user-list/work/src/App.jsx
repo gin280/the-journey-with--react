@@ -3,12 +3,22 @@ import { useEffect, useState } from "react";
 function App() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     setLoading(true);
-    fetch("https://jsonplaceholder.typicode.com/users")
+
+    const controller = new AbortController();
+
+    fetch("https://jsonplaceholder.typicode.com/users", {
+      signal: controller.signal,
+    })
       .then((response) => response.json())
       .then((json) => setUsers(json))
       .finally(() => setLoading(false));
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   return (
