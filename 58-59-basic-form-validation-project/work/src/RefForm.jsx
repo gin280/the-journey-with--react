@@ -1,26 +1,26 @@
-import { useState, useRef } from "react";
-import { validateEmail, validatePassword } from "./validation";
+import { useState, useRef } from "react"
+import { validateEmail, validatePassword } from "./validation"
 
 function App() {
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const [isAfterFirstSubmit, setIsAfterFirstSubmit] = useState(false);
-  const [emailErrors, setEmailErrors] = useState([]);
-  const [passwordErrors, setPasswordErrors] = useState([]);
+  const emailRef = useRef()
+  const passwordRef = useRef()
+  const [isAfterFirstSubmit, setIsAfterFirstSubmit] = useState(false)
+  const [emailErrors, setEmailErrors] = useState([])
+  const [passwordErrors, setPasswordErrors] = useState([])
 
   const submit = (e) => {
-    e.preventDefault();
-    setIsAfterFirstSubmit(true);
+    e.preventDefault()
+    setIsAfterFirstSubmit(true)
 
-    const emailResults = validateEmail(emailRef.current.value);
-    const passwordResults = validatePassword(passwordRef.current.value);
+    const emailResults = validateEmail(emailRef.current.value)
+    const passwordResults = validatePassword(passwordRef.current.value)
 
-    setEmailErrors(emailResults);
-    setPasswordErrors(passwordResults);
+    setEmailErrors(emailResults)
+    setPasswordErrors(passwordResults)
     if (emailResults.length === 0 && passwordResults.length === 0) {
-      alert("Success");
+      alert("Success")
     }
-  };
+  }
 
   return (
     <form onSubmit={submit} className="form">
@@ -66,7 +66,7 @@ function App() {
         Submit
       </button>
     </form>
-  );
+  )
 }
 
-export default App;
+export default App
