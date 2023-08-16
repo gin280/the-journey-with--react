@@ -28,17 +28,10 @@ export function DatePicker({ value, onChange }) {
 function DatePickerModal({ value, onChange }) {
   const [visibleMonth, setVisibleMonth] = useState(value || new Date())
 
-  console.log(visibleMonth, "la")
-
-  const startOfWeek = dayjs(visibleMonth).startOf("month").startOf("week")
-  const endOfWeek = dayjs(visibleMonth).endOf("month").endOf("week")
-
-  const visibleDates = Array.from(
-    { length: endOfWeek.diff(startOfWeek, "day") + 1 },
-    (_, index) => {
-      return startOfWeek.add(index, "day")
-    }
-  )
+  const visibleDates = Array.from({ length: 42 }, (_, index) => {
+    const start = dayjs(visibleMonth).startOf("month").startOf("week")
+    return start.add(index, "day")
+  })
 
   function showPreviousMonth() {
     setVisibleMonth((currentMonth) => dayjs(currentMonth).add(-1, "month"))
@@ -81,14 +74,13 @@ function DatePickerModal({ value, onChange }) {
           <button
             onClick={() => onChange(date)}
             className={`date ${
-              !date.isSame(visibleMonth, "month") &&
-              "date-picker-other-month-date"
-            } ${date.isSame(value, "day") && "selected"} ${
-              date.isToday() && "today"
+              !isSameMonth(date, visibleMonth) && "date-picker-other-month-date"
+            } ${isSameDay(date, value) && "selected"} ${
+              isToday(date) && "today"
             }`}
-            key={date.format("YYYY-MM-DD")}
+            key={date.format("YYYY-MM-DD")} // 使用 dayjs 的 format 方法
           >
-            {date.date()}
+            {date.date()} {/* 使用 dayjs 的 date 方法获取日期部分 */}
           </button>
         ))}
       </div>
