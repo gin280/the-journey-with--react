@@ -1,89 +1,58 @@
-import { useState } from "react"
-import dayjs from "dayjs"
-import isToday from "dayjs/plugin/isToday"
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
-import weekOfYear from "dayjs/plugin/weekOfYear"
-import weekDay from "dayjs/plugin/weekday"
+import { useState, memo, useTransition, Suspense } from "react"
+const Test = () => {
+  const [tab, setTab] = useState("Post")
+  const [isPending, startTransition] = useTransition()
 
-dayjs.extend(isToday)
-dayjs.extend(isSameOrBefore)
-dayjs.extend(weekOfYear)
-dayjs.extend(weekDay)
-
-export function DatePicker({ value, onChange }) {
-  const [isOpen, setIsOpen] = useState(false)
+  function setOpenTab(tab) {
+    startTransition(() => setTab(tab))
+  }
   return (
-    <div className="date-picker-container">
-      <button
-        className="date-picker-button"
-        onClick={() => setIsOpen((o) => !o)}
-      >
-        {value == null ? "Select a Date" : dayjs(value).format("MMM Do, YYYY")}
+    <>
+      <button className="button" onClick={() => setOpenTab("Post")}>
+        View Post
       </button>
-      {isOpen && <DatePickerModal onChange={onChange} value={value} />}
-    </div>
+      <button className="button" onClick={() => setOpenTab("Comment")}>
+        View Comment
+      </button>
+      <button className="button" onClick={() => setOpenTab("User")}>
+        View User
+      </button>
+      {tab === "Post" ? <Post /> : tab === "Comment" ? <Comments /> : <User />}
+    </>
   )
 }
 
-function DatePickerModal({ value, onChange }) {
-  const [visibleMonth, setVisibleMonth] = useState(value || new Date())
+export default Test
 
-  const visibleDates = Array.from({ length: 42 }, (_, index) => {
-    const start = dayjs(visibleMonth).startOf("month").startOf("week")
-    return start.add(index, "day")
-  })
-
-  function showPreviousMonth() {
-    setVisibleMonth((currentMonth) => dayjs(currentMonth).add(-1, "month"))
-  }
-
-  function showNextMonth() {
-    setVisibleMonth((currentMonth) => dayjs(currentMonth).add(1, "month"))
-  }
-
+function Comments() {
   return (
-    <div className="date-picker">
-      <div className="date-picker-header">
-        <button
-          className="prev-month-button month-button"
-          onClick={showPreviousMonth}
-        >
-          &larr;
-        </button>
-        <div className="current-month">
-          {dayjs(visibleMonth).format("MMMM - YYYY")}
-        </div>
-        <button
-          className="next-month-button month-button"
-          onClick={showNextMonth}
-        >
-          &rarr;
-        </button>
-      </div>
-      <div className="date-picker-grid-header date-picker-grid">
-        <div>Sun</div>
-        <div>Mon</div>
-        <div>Tue</div>
-        <div>Wed</div>
-        <div>Thu</div>
-        <div>Fri</div>
-        <div>Sat</div>
-      </div>
-      <div className="date-picker-grid-dates date-picker-grid">
-        {visibleDates.map((date) => (
-          <button
-            onClick={() => onChange(date)}
-            className={`date ${
-              !isSameMonth(date, visibleMonth) && "date-picker-other-month-date"
-            } ${isSameDay(date, value) && "selected"} ${
-              isToday(date) && "today"
-            }`}
-            key={date.format("YYYY-MM-DD")} // 使用 dayjs 的 format 方法
-          >
-            {date.date()} {/* 使用 dayjs 的 date 方法获取日期部分 */}
-          </button>
+    <ul>
+      {Array(250)
+        .fill(null)
+        .map((_, i) => (
+          <li key={i}>
+            <Comment number={i} />
+          </li>
         ))}
-      </div>
-    </div>
+    </ul>
   )
+}
+
+function Comment({ number }) {
+  const start = performance.now()
+  while (start > performance.now() - 100) {
+    // Artificial delay -- do nothing for 2ms
+  }
+  return <div>Comment {number}</div>
+}
+
+// const Comment = memo(_Comment)
+
+function Post() {
+  console.log("render post")
+  return <div>Post</div>
+}
+
+function User() {
+  return <div>User</div>
 }

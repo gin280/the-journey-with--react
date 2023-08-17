@@ -5,6 +5,14 @@ body {
   justify-content: center;
 }
 
+.button {
+  background: blue;
+}
+
+.button:hover {
+  background: red;
+}
+
 .date-picker-container {
   position: relative;
   display: inline-block;
